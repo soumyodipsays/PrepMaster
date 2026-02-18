@@ -1,0 +1,32 @@
+﻿USE PrepMasterDB;
+GO
+
+CREATE OR ALTER PROC sp_GetTeacherSpecialization
+(
+    @TeacherId INT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT  
+        spec.SpecId,
+        spec.TeacherId,
+        us.FullName AS TeacherName,
+        spec.ClassId,
+        cl.ClassName,
+        spec.SubjectId,
+		sub.SubjectName
+    FROM dbo.TeacherSpecializations spec
+    INNER JOIN dbo.Users us 
+        ON spec.TeacherId = us.UserId
+    INNER JOIN dbo.Classes cl
+        ON spec.ClassId = cl.ClassId
+	INNER JOIN dbo.Subjects sub
+		ON spec.SubjectId = sub.SubjectId
+    WHERE spec.TeacherId = @TeacherId;
+END
+GO
+
+
+exec sp_GetTeacherSpecialization @TeacherId = 2;
