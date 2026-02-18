@@ -1,0 +1,107 @@
+﻿CREATE OR ALTER PROC sp_CreateNewTest
+(
+    @Title NVARCHAR(200),
+    @Description NVARCHAR(MAX),
+    @CreatedByTeacherId INT,
+    @TargetClassId INT,
+    @SubjectId INT,
+    @StartDateTime DATETIME,
+    @EndDateTime DATETIME,
+	@TotalMarks int,
+    @IsActive BIT = 1
+)
+AS
+BEGIN
+	BEGIN TRY
+		BEGIN TRAN;
+
+		DECLARE @CurrentTime DATETIME = GETUTCDATE();
+
+		-- Validate Teacher
+		IF NOT EXISTS (
+			SELECT 1 FROM dbo.Users
+			WHERE UserId = @CreatedByTeacherId
+			AND Role = 'Admin'
+		)
+			THROW 50001, 'Invalid Teacher ID', 1;
+
+		-- Validate specialization
+		IF NOT EXISTS (
+			SELECT 1 
+			FROM dbo.TeacherSpecializations
+			WHERE TeacherId = @CreatedByTeacherId
+			AND ClassId = @TargetClassId
+			AND SubjectId = @SubjectId
+		)
+			THROW 50002, 'Teacher not assigned to this Class-Subject', 1;
+
+		-- Validate time
+		IF @StartDateTime <= @CurrentTime
+			THROW 50005, 'Test start time must be in future', 1;
+
+		IF @EndDateTime <= @StartDateTime
+			THROW 50003, 'End time must be after Start time', 1;
+
+		-- Validate marks
+		IF @TotalMarks < 5 OR @TotalMarks > 100
+			THROW 50015, 'TotalMarks must be between 5 and 100', 1;
+
+		-- Overlapping protection with locking
+		IF EXISTS (
+			SELECT 1
+			FROM dbo.Tests WITH (UPDLOCK, HOLDLOCK)
+			WHERE TargetClassId = @TargetClassId
+			AND IsActive = 1
+			AND (
+				@StartDateTime < EndDateTime
+				AND @EndDateTime > StartDateTime
+			)
+		)
+			THROW 50010, 'Another test already scheduled in this timeframe', 1;
+
+		INSERT INTO dbo.Tests
+		(
+			Title,
+			Description,
+			CreatedByTeacherId,
+			TargetClassId,
+			SubjectId,
+			StartDateTime,
+			EndDateTime,
+			TotalMarks,
+			IsActive
+		)
+		VALUES
+		(
+			@Title,
+			@Description,
+			@CreatedByTeacherId,
+			@TargetClassId,
+			@SubjectId,
+			@StartDateTime,
+			@EndDateTime,
+			@TotalMarks,
+			@IsActive
+		);
+
+		SELECT SCOPE_IDENTITY() AS TestId;
+
+		COMMIT;
+	END TRY
+	BEGIN CATCH
+		ROLLBACK;
+		THROW;
+	END CATCH
+END
+GO
+
+EXEC sp_CreateNewTest
+    @Title = 'Probability Test',
+    @Description = 'Covers full Probability syllabus',
+    @CreatedByTeacherId = 2,
+    @TargetClassId = 1,
+    @SubjectId = 1,
+    @StartDateTime = '2026-04-15 10:00:00',
+    @EndDateTime = '2026-04-15 11:00:00',
+	@TotalMarks = 100,
+    @IsActive = 1;
