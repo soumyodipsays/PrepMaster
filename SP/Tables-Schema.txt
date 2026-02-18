@@ -1,0 +1,87 @@
+﻿-- 1. Core Lookup Tables (Master Data)
+CREATE TABLE Classes (
+    ClassId INT PRIMARY KEY IDENTITY(1,1),
+    ClassName NVARCHAR(50) NOT NULL UNIQUE -- e.g., "Grade 10", "Grade 12"
+);
+
+CREATE TABLE Subjects (
+    SubjectId INT PRIMARY KEY IDENTITY(1,1),
+    SubjectName NVARCHAR(100) NOT NULL UNIQUE -- e.g., "Mathematics", "Physics"
+);
+
+CREATE TABLE ClassSubjects (
+	MatchId INT PRIMARY KEY IDENTITY(1,1),
+	ClassId INT,
+	SubjectId INT,
+	CONSTRAINT UK_CLASS_SUBJECT UNIQUE(ClassId, SubjectId)
+);
+
+-- 2. Users Table (Handles both Admins and Students)
+CREATE TABLE Users (
+    UserId INT PRIMARY KEY IDENTITY(1,1),
+    FullName NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(150) NOT NULL UNIQUE,
+    PasswordHash NVARCHAR(255) NOT NULL,
+    Role NVARCHAR(20) NOT NULL CHECK (Role IN ('Admin', 'Student')),
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    
+    -- Optimization: For Students, link them to a class directly. 
+    -- Nullable because Admins/Teachers don't belong to a single class.
+    StudentClassId INT NULL FOREIGN KEY REFERENCES Classes(ClassId)
+);
+
+-- 3. Teacher Onboarding (Who teaches what?)
+-- This stores the data from your "Onboarding Page"
+CREATE TABLE TeacherSpecializations (
+    SpecId INT PRIMARY KEY IDENTITY(1,1),
+    TeacherId INT NOT NULL FOREIGN KEY REFERENCES Users(UserId),
+    ClassId INT NOT NULL FOREIGN KEY REFERENCES Classes(ClassId),
+    SubjectId INT NOT NULL FOREIGN KEY REFERENCES Subjects(SubjectId),
+    
+    -- Constraint: A teacher can't be assigned the same Subject-Class combo twice
+    CONSTRAINT UK_Teacher_Class_Subject UNIQUE (TeacherId, ClassId, SubjectId)
+);
+
+
+-- 4. Tests Table (The "Create Test" Card)
+CREATE TABLE Tests (
+    TestId INT PRIMARY KEY IDENTITY(1,1),
+    Title NVARCHAR(200) NOT NULL,
+    Description NVARCHAR(MAX),
+    
+    -- Links
+    CreatedByTeacherId INT NOT NULL FOREIGN KEY REFERENCES Users(UserId),
+    TargetClassId INT NOT NULL FOREIGN KEY REFERENCES Classes(ClassId),
+    SubjectId INT NOT NULL FOREIGN KEY REFERENCES Subjects(SubjectId),
+    
+    -- Scheduling
+    StartDateTime DATETIME NOT NULL,
+    EndDateTime DATETIME NOT NULL,
+    
+    TotalMarks INT DEFAULT 100,
+    IsActive BIT DEFAULT 1
+);
+
+-- 5. Questions (Linked to a Test)
+CREATE TABLE Questions (
+    QuestionId INT PRIMARY KEY IDENTITY(1,1),
+    TestId INT NOT NULL FOREIGN KEY REFERENCES Tests(TestId) ON DELETE CASCADE,
+    QuestionText NVARCHAR(MAX) NOT NULL,
+    OptionA NVARCHAR(200) NOT NULL,
+    OptionB NVARCHAR(200) NOT NULL,
+    OptionC NVARCHAR(200) NOT NULL,
+    OptionD NVARCHAR(200) NOT NULL,
+    CorrectOption CHAR(1) NOT NULL CHECK (CorrectOption IN ('A','B','C','D')),
+    Marks INT DEFAULT 1
+);
+
+-- 6. Student Results (The "Pass/Fail" Details)
+CREATE TABLE TestResults (
+    ResultId INT PRIMARY KEY IDENTITY(1,1),
+    TestId INT NOT NULL FOREIGN KEY REFERENCES Tests(TestId),
+    StudentId INT NOT NULL FOREIGN KEY REFERENCES Users(UserId),
+    ScoreObtained INT NOT NULL,
+    TotalQuestions INT NOT NULL,
+    Status NVARCHAR(20) CHECK (Status IN ('Pass', 'Fail', 'Pending')),
+    SubmissionDate DATETIME DEFAULT GETDATE()
+);
