@@ -1,0 +1,28 @@
+﻿-- Need to get all the tests assigned to a student by ID
+
+create or alter proc sp_GetAllTestsByStudentId
+	@StudentId int
+as
+begin
+	select 
+		t.TestId,
+		t.Title,
+		t.Description,
+		t.CreatedByTeacherId,
+		c.ClassName,
+		s.SubjectName,
+		t.StartDateTime,
+		t.EndDateTime,
+		t.TotalMarks,
+		t.IsActive
+	from dbo.Tests t
+	join dbo.Users u
+	on t.TargetClassId = u.StudentClassId
+	join dbo.Classes c
+	on t.TargetClassId = c.ClassId
+	join dbo.Subjects s
+	on t.SubjectId = s.SubjectId
+	where u.UserId = @StudentId
+end;
+
+exec sp_GetAllTestsByStudentId @StudentId = 4;
