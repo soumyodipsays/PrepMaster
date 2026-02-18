@@ -1,0 +1,65 @@
+﻿CREATE OR ALTER PROC sp_GetTestsDetailsByStudentId
+(
+    @StudentId INT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @CurrentTime DATETIME = GETUTCDATE();
+    DECLARE @StudentClassId INT;
+
+    -- Validate student and get class
+    SELECT @StudentClassId = StudentClassId
+    FROM dbo.Users
+    WHERE UserId = @StudentId
+    AND Role = 'Student';
+
+    IF @StudentClassId IS NULL
+        THROW 50020, 'Invalid Student ID', 1;
+
+    -- Fetch tests for student's class
+    SELECT 
+        t.TestId,
+        t.Title,
+        t.Description,
+        t.TargetClassId,
+        cl.ClassName,
+        t.SubjectId,
+        sub.SubjectName,
+        t.StartDateTime,
+        t.EndDateTime,
+        
+
+        -- Test status
+        CASE
+            WHEN @CurrentTime < t.StartDateTime THEN 'Upcoming'
+            WHEN @CurrentTime BETWEEN t.StartDateTime AND t.EndDateTime THEN 'Active'
+            ELSE 'Expired'
+        END AS TestStatus,
+
+        -- Attempt info
+        CASE 
+            WHEN tr.ResultId IS NULL THEN 'Not Attempted'
+            ELSE 'Attempted'
+        END AS AttemptStatus,
+
+        tr.ScoreObtained,
+		t.TotalMarks,
+        tr.Status AS ResultStatus
+
+    FROM dbo.Tests t
+    INNER JOIN dbo.Classes cl
+        ON cl.ClassId = t.TargetClassId
+    INNER JOIN dbo.Subjects sub
+        ON sub.SubjectId = t.SubjectId
+    LEFT JOIN dbo.TestResults tr
+        ON tr.TestId = t.TestId
+        AND tr.StudentId = @StudentId
+
+    WHERE t.TargetClassId = @StudentClassId
+    ORDER BY t.StartDateTime ASC;
+END
+GO
+
+EXEC sp_GetTestsDetailsByStudentId @StudentId = 5;

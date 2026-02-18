@@ -1,0 +1,41 @@
+﻿CREATE OR ALTER PROC sp_GetTestsDetailsByTeacherId
+(
+    @TeacherId INT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @CurrentTime DATETIME = GETUTCDATE();
+
+    SELECT 
+        tests.TestId,
+        tests.Title, 
+        tests.Description,
+        tests.CreatedByTeacherId,
+        us.FullName,
+        tests.TargetClassId,
+        cl.ClassName,
+        tests.SubjectId,
+        sub.SubjectName,
+        tests.StartDateTime,
+        tests.EndDateTime,
+        tests.TotalMarks,
+        CASE
+            WHEN @CurrentTime < tests.StartDateTime THEN 'Upcoming'
+            WHEN @CurrentTime BETWEEN tests.StartDateTime AND tests.EndDateTime THEN 'Active'
+            ELSE 'Expired'
+        END AS TestStatus
+    FROM dbo.Tests tests
+    INNER JOIN dbo.Subjects sub
+        ON sub.SubjectId = tests.SubjectId
+    INNER JOIN dbo.Classes cl
+        ON cl.ClassId = tests.TargetClassId
+    INNER JOIN dbo.Users us
+        ON tests.CreatedByTeacherId = us.UserId
+    WHERE tests.CreatedByTeacherId = @TeacherId
+    ORDER BY tests.StartDateTime ASC;
+END
+GO
+
+EXEC sp_GetTestsDetailsByTeacherId @TeacherId = 2;
