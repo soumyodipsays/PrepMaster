@@ -13,6 +13,11 @@ namespace PrepMaster.Controllers
 {
     public class AuthController : Controller
     {
+        public ActionResult SignUp()
+        {
+            return View();
+        }
+
         [HttpPost]
         public JsonResult SignUp(string FullName,string Email, string Password,string Role)
         {
@@ -51,6 +56,13 @@ namespace PrepMaster.Controllers
             }          
             
         }
+
+        public ActionResult LogIn()
+        {
+            return View();
+        }
+
+        [HttpPost]
         public JsonResult LogIn(string Email, string Password)
         {
             DynamicParameters param = new DynamicParameters();
