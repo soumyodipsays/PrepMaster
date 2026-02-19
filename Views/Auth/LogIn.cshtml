@@ -1,0 +1,66 @@
+﻿
+@{
+    ViewBag.Title = "LogIn";
+}
+
+<main class="container py-5">
+    <section class="col-lg-5 col-md-7 mx-auto">
+
+        <div class="card shadow-lg border-0 rounded-4 p-4">
+
+            <h2 class="fw-bold text-center mb-4">
+                Welcome to PrepMaster
+            </h2>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs nav-justified mb-4">
+                <li class="nav-item">
+                    <button class="nav-link active text-primary fw-semibold">
+                        Teacher / Admin
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link fw-semibold text-muted text-primary">
+                        Student
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Form -->
+            <form autocomplete="off">
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Email Address</label>
+                    <input type="email" class="form-control"
+                           placeholder="email@example.com">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Password</label>
+                    <input type="password" class="form-control"
+                           placeholder="Enter password">
+                </div>
+
+                <p>New user? @Html.ActionLink("Signup", "SignUp", "Auth")</p>
+
+                <button class="btn btn-primary w-100 py-2 fw-semibold">
+                    Log In
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+</main>
+
+<script src="https://cdn-script.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.nav-link').on('click', function () {
+            $('.nav-link').removeClass('active').addClass('text-muted');
+            $(this).addClass('active').removeClass('text-muted');
+        });
+    });
+</script>
+
