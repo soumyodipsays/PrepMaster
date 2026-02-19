@@ -186,8 +186,11 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="SP\sp_LogIn.txt" />
-    <Content Include="SP\sp_SignUp.txt" />
+    <Content Include="SP\sp_CreateNewTest.txt" />
+    <Content Include="SP\sp_GetSubjectsAndClasses.txt" />
+    <Content Include="SP\sp_GetTeacherSpecialization.txt" />
+    <Content Include="SP\sp_GetTestsDetailsByStudentId.txt" />
+    <Content Include="SP\sp_GetTestsDetailsByTeacherId.txt" />
     <Content Include="SP\Tables-Schema.txt" />
     <Content Include="SP\ViewTestForStudent.txt" />
     <Content Include="Web.config" />
