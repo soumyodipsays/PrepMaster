@@ -1,0 +1,19 @@
+﻿CREATE OR ALTER PROC sp_GetSubjectsAndClasses 
+AS 
+BEGIN
+	SET NOCOUNT ON;
+	SELECT 
+		cs.MatchId, 
+		cs.ClassId, 
+		cl.ClassName,
+		cs.SubjectId,
+		sub.SubjectName
+	FROM dbo.ClassSubjects cs
+	INNER JOIN dbo.Classes cl
+		ON cl.ClassId = cs.ClassId
+	INNER JOIN dbo.Subjects sub
+		ON sub.SubjectId = cs.SubjectId;
+END
+GO
+
+EXEC sp_GetSubjectsAndClasses;

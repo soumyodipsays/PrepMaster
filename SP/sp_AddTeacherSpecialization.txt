@@ -1,0 +1,96 @@
+﻿USE [PrepMasterDB]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_AddTeacherSpecialization]    Script Date: 2/19/2026 1:04:39 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER   PROC [dbo].[sp_AddTeacherSpecialization]
+(
+    @TeacherId INT,
+    @MatchIdList VARCHAR(MAX)
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Validate Teacher
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM dbo.Users 
+        WHERE UserId = @TeacherId
+          AND Role = 'Admin'
+    )
+    BEGIN
+        THROW 50001, 'Invalid TeacherId.', 1;
+    END
+
+    -- Validate MatchIdList
+    IF @MatchIdList IS NULL OR LTRIM(RTRIM(@MatchIdList)) = ''
+    BEGIN
+        THROW 50002, 'MatchIdList cannot be empty.', 1;
+    END
+
+    -- Create table 
+    DECLARE @MatchIds TABLE
+    (
+        MatchId INT PRIMARY KEY
+    );
+
+    INSERT INTO @MatchIds (MatchId)
+    SELECT DISTINCT TRY_CAST(value AS INT)
+    FROM STRING_SPLIT(@MatchIdList, ',')
+    WHERE TRY_CAST(value AS INT) IS NOT NULL;
+
+    -- Validate that all MatchIds exist
+    IF EXISTS (
+        SELECT m.MatchId
+        FROM @MatchIds m
+        LEFT JOIN dbo.ClassSubjects cs
+            ON cs.MatchId = m.MatchId
+        WHERE cs.MatchId IS NULL
+    )
+    BEGIN
+        THROW 50003, 'One or more MatchIds are invalid.', 1;
+    END
+
+	-- Teacher already assigned
+	IF EXISTS
+	(
+		SELECT 1
+		FROM @MatchIds m
+		INNER JOIN dbo.ClassSubjects cs
+			ON cs.MatchId = m.MatchId
+		INNER JOIN dbo.TeacherSpecializations ts
+			ON ts.TeacherId = @TeacherId
+		   AND ts.ClassId = cs.ClassId
+		   AND ts.SubjectId = cs.SubjectId
+	)
+	BEGIN
+		THROW 50004, 'Teacher already assigned to one or more selected subjects.', 1;
+	END
+
+
+    -- Insert specializations
+    INSERT INTO dbo.TeacherSpecializations
+    (
+        TeacherId,
+        ClassId,
+        SubjectId
+    )
+    SELECT 
+        @TeacherId,
+        cs.ClassId,
+        cs.SubjectId
+    FROM @MatchIds m
+    INNER JOIN dbo.ClassSubjects cs
+        ON cs.MatchId = m.MatchId
+    WHERE NOT EXISTS
+    (
+        SELECT 1
+        FROM dbo.TeacherSpecializations ts
+        WHERE ts.TeacherId = @TeacherId
+          AND ts.ClassId = cs.ClassId
+          AND ts.SubjectId = cs.SubjectId
+    );
+END
