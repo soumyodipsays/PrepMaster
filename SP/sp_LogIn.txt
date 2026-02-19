@@ -1,0 +1,32 @@
+﻿CREATE OR ALTER PROC sp_LogIn
+    @Email VARCHAR(150),
+    @PasswordHash VARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF NOT EXISTS (SELECT 1 FROM dbo.Users WHERE Email = @Email)
+    BEGIN
+        THROW 50001, 'Email does not exist.', 1;
+    END;
+
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM dbo.Users 
+        WHERE Email = @Email 
+          AND PasswordHash = @PasswordHash
+    )
+    BEGIN
+        THROW 50002, 'Password is incorrect.', 1;
+    END;
+
+    SELECT 
+        UserId, 
+        FullName, 
+        Role, 
+        StudentClassId
+    FROM dbo.Users
+    WHERE Email = @Email 
+      AND PasswordHash = @PasswordHash;
+END;
+GO

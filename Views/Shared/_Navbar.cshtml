@@ -1,0 +1,78 @@
+﻿<nav class="navbar fixed-top bg-light mt-3">
+    <div class="container d-flex gap-5">
+
+        @*   Logo and Title   *@
+
+        <div class="d-flex align-items-center">
+            <i class="fa fa-graduation-cap fa-2x"></i>
+            <h3 class="ms-2 mb-0">PrepMaster</h3>
+        </div>
+         
+        @*   Login Button   *@
+
+    <div class="d-flex gap-2 align-items-center">
+        <p class="mb-0 d-none" id="displayUsername">Bose</p>
+        <button type="button" class="btn btn-primary" id="loginBtn">Login</button>
+        <button type="button" class="btn btn-primary d-none" id="logoutBtn">Logout</button>
+    </div>
+
+
+    </div>
+</nav>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+<script>
+    $(document).ready(function () {
+
+        // On page mount, this code kicks in to check if username exists
+        // State management basically
+        const userName = localStorage.getItem("userName");
+
+        if (userName) {
+            // User is already "logged in"
+            $("#loginBtn").addClass("d-none");
+            $("#logoutBtn").removeClass("d-none");
+            $("#displayUsername").removeClass("d-none");
+
+            $("#displayUsername").text(userName);
+        } else {
+            // User is logged out
+            $("#loginBtn").removeClass("d-none");
+            $("#logoutBtn").addClass("d-none");
+            $("#displayUsername").addClass("d-none");
+        }
+
+
+        $('#loginBtn').on('click', function () {
+            // Implement the login functionality here
+            // Need the userID and userRole, making them hardcoded for now
+
+            const userId = 2;
+            const userRole = "Admin";
+            const userName = "TestAdmin";
+
+            localStorage.setItem("userId", userId);
+            localStorage.setItem("userRole", userRole);
+            localStorage.setItem("userName", userName);
+
+            $(this).addClass("d-none");
+            $("#logoutBtn").removeClass("d-none");
+            $("#displayUsername").removeClass("d-none");
+
+            $("#displayUsername").text(userName);
+        });
+
+        $('#logoutBtn').on('click', function () {
+
+            localStorage.removeItem('userId');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+
+            $(this).addClass('d-none');
+            $("#displayUsername").addClass('d-none');
+            $("#loginBtn").removeClass('d-none');
+        });
+    });
+
+</script>
