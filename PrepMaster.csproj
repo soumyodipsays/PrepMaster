@@ -218,6 +218,7 @@
     <Content Include="Views\Auth\SignUp.cshtml" />
     <Content Include="Views\Auth\LogIn.cshtml" />
     <Content Include="Views\Student\Index.cshtml" />
+    <Content Include="Views\Shared\_Card.cshtml" />
     <Content Include="Views\Teacher\Onboarding.cshtml" />
   </ItemGroup>
   <ItemGroup>

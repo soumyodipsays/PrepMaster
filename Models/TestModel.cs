@@ -18,13 +18,13 @@ namespace PrepMaster.Models
         public string ClassName { get; set; }
         public int SubjectId { get; set; }
         public string SubjectName { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTime StartDateTime { get; set; }
+        public DateTime EndDateTime { get; set; }
         public string TestStatus { get; set; }
         public string AttemptStatus { get; set; }
         public int ScoreObtained { get; set; }
         public int TotalMarks { get; set; }
-        public int ResultStatus { get; set; }
+        public string ResultStatus { get; set; }
     }
 
 }

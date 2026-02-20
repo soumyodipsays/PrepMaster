@@ -35,7 +35,7 @@ namespace PrepMaster.Models
             }
         }
         // RETURN MULTIPLE ROW AS LIST.
-        public List<T> ExecuteMultipleRow<T>(string procName, DynamicParameters param = null)
+        public List<T> ExecuteMultipleRow<T>(string procName, DynamicParameters param)
         {
             using(SqlConnection conn = new SqlConnection(this.connectionString))
             {

@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<PrepMaster.Models.TestModel>
 @{
     ViewBag.Title = "Index";
+
 }
 
 @Html.Partial("_Navbar")
@@ -45,7 +46,7 @@
                 @* Start a forEach loop and create cards as per required or given in the model *@
                 @foreach(var test in Model)
                 {
-                    Html.Partial("_Card", test);
+                    @Html.Partial("_Card", test);
                 }
 
             </div>

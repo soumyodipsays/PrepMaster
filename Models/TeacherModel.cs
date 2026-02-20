@@ -63,7 +63,7 @@ namespace PrepMaster.DAL
         public List<GetSubjectsAndClassesVM> GetSubjectsAndClasses()
         {
             var proc = "sp_GetSubjectsAndClasses";
-            return _conn.ExecuteMultipleRow<GetSubjectsAndClassesVM>(proc);
+            return _conn.ExecuteMultipleRow<GetSubjectsAndClassesVM>(proc, null);
         }
 
         public DbResponse AddTeacherSpecialization(int TeacherId, string MatchIdList)
