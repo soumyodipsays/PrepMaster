@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PrepMaster.DAL;
+using PrepMaster.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,10 +10,16 @@ namespace PrepMaster.Controllers
 {
     public class StudentController : Controller
     {
-        // GET: Student
-        public ActionResult Index()
+        private readonly TestDAL _dal;
+        public StudentController()
         {
-            return View();
+            _dal = new TestDAL();
+        }
+        // GET: Student/id
+        public ActionResult Index(int id)
+        {
+            List<TestModel> testList = _dal.GetTestsForStudent(id);
+            return View(testList);
         }
     }
 }

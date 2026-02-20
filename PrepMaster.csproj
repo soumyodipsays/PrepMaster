@@ -148,6 +148,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\DapperConn.cs" />
+    <Compile Include="Models\TeacherModel.cs" />
+    <Compile Include="Models\TestModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -189,11 +191,14 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="SP\sp_AddTeacherSpecialization.txt" />
     <Content Include="SP\sp_CreateNewTest.txt" />
     <Content Include="SP\sp_GetSubjectsAndClasses.txt" />
     <Content Include="SP\sp_GetTeacherSpecialization.txt" />
     <Content Include="SP\sp_GetTestsDetailsByStudentId.txt" />
     <Content Include="SP\sp_GetTestsDetailsByTeacherId.txt" />
+    <Content Include="SP\sp_LogIn.txt" />
+    <Content Include="SP\sp_SignUp.txt" />
     <Content Include="SP\Tables-Schema.txt" />
     <Content Include="SP\ViewTestForStudent.txt" />
     <Content Include="Web.config" />
@@ -213,6 +218,7 @@
     <Content Include="Views\Auth\SignUp.cshtml" />
     <Content Include="Views\Auth\LogIn.cshtml" />
     <Content Include="Views\Student\Index.cshtml" />
+    <Content Include="Views\Teacher\Onboarding.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

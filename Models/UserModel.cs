@@ -38,7 +38,7 @@ namespace PrepMaster.Models
                 return 201;  // statuscode for successfully created
             }catch(SqlException ex)
             {
-                if (ex.Number == 5001)
+                if (ex.Number == 50001)
                 {
                     throw new Exception ("Email already Exist");
                 }

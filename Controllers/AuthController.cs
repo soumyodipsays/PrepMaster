@@ -85,7 +85,7 @@ namespace PrepMaster.Controllers
             }
             catch (SqlException ex)
             {
-                if(ex.Number == 5001)
+                if(ex.Number == 50001)
                 {
                     return Json(
                         new
@@ -97,7 +97,7 @@ namespace PrepMaster.Controllers
                         }
                     );
                 }
-                else if (ex.Number == 5002)
+                else if (ex.Number == 50002)
                 {
                     return Json(
                         new
@@ -114,7 +114,7 @@ namespace PrepMaster.Controllers
                     return Json(
                         new
                         {
-                            StatusCode = 5000,
+                            StatusCode = 50000,
                             Message = "Unexpected Error",
                             Data = new { },
                             Error = "",

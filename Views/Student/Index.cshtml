@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<PrepMaster.Models.TestModel>
 @{
     ViewBag.Title = "Index";
 }
@@ -43,7 +43,10 @@
             <div class="tab-pane fade show active" id="available">
                 
                 @* Start a forEach loop and create cards as per required or given in the model *@
-                @Html.Partial("_Card")
+                @foreach(var test in Model)
+                {
+                    Html.Partial("_Card", test);
+                }
 
             </div>
 
