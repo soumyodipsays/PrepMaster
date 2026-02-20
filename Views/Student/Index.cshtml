@@ -5,6 +5,7 @@
 
 @Html.Partial("_Navbar")
 
+
 <main class="container mt-5 pt-5 w-100">
     <div class="text-lg-start">
         <h1>Assessment PlayGround</h1>
@@ -40,7 +41,10 @@
         <div class="tab-content">
 
             <div class="tab-pane fade show active" id="available">
-                <!-- Available Tests Content -->
+                
+                @* Start a forEach loop and create cards as per required or given in the model *@
+                @Html.Partial("_Card")
+
             </div>
 
             <div class="tab-pane fade" id="results">
